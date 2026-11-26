@@ -23,6 +23,24 @@ try {
     $body = @{ configurations = @{ 'retention.ms' = '172800000' } } | ConvertTo-Json -Depth 6
     Invoke-RestMethod -Uri "$base/topics/$demo" -Method Patch -Headers $headers `
         -ContentType 'application/json' -Body $body | Format-List
+    Write-Host "=== VERIFICAR RETENCION DE 48 HORAS ==="
+    $confirmado = $false
+
+    for ($i = 1; $i -le 10; $i++) {
+        Start-Sleep -Milliseconds 500
+        $actual = Invoke-RestMethod -Uri "$base/topics/$demo" -Headers $headers
+
+        if ($actual.configurations.'retention.ms' -eq '172800000') {
+            $actual | Format-List
+            $confirmado = $true
+            break
+        }
+    }
+
+    if (-not $confirmado) {
+        throw "Kafka no confirmo la retencion de 48 horas."
+    }
+
     Write-Host "=== GRUPOS DE CONSUMIDORES ==="
     Invoke-RestMethod -Uri "$base/consumer-groups" -Headers $headers | Format-Table
     Write-Host "=== PRUEBA REST COMPLETADA ==="
