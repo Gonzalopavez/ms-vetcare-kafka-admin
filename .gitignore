@@ -1,0 +1,17 @@
+# Maven, Java, IDEs
+/target/
+*.class
+*.log
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+# Entornos y secretos
+.env
+.env.*
+!.env.example
+# No incluir pruebas/resultados temporales
+*.tmp
+*.bak
